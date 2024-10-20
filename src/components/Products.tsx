@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Card from './Card';
-import Filters from './Fitlters';
+import Filters from './Filters';
 import Loading from './Loading';
 import IconDanger from '../assets/svg icons/IconDanger';
 
@@ -23,16 +23,12 @@ export default function Products({ submitInput }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [reload, setReload] = useState(0);
+  const [reload, setReload] = useState(1);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
-      if (marcasSeleccionadas.length > 0) {
-        console.log('hola');
-      }
-
       try {
+        console.log('Enviando petición');
         const response = await axios.get(
           'http://localhost:3000/products/search',
           {
@@ -72,7 +68,10 @@ export default function Products({ submitInput }) {
           <h1 className="">Ha ocurrido un error al cargar los productos</h1>
         </div>
         <button
-          onClick={() => setReload(reload + 1)}
+          onClick={() => {
+            setReload(reload + 1);
+            setLoading(true);
+          }}
           className="rounded-md hover:text-neutral-500"
         >
           Intentar de nuevo
