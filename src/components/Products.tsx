@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Card from './Card';
 import Filters from './Fitlters';
+import Loading from './Loading';
+import IconDanger from '../assets/svg icons/IconDanger';
 
 interface Product {
   idProducto: string;
@@ -21,9 +23,11 @@ export default function Products({ submitInput }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       if (marcasSeleccionadas.length > 0) {
         console.log('hola');
       }
@@ -47,22 +51,32 @@ export default function Products({ submitInput }) {
       setLoading(false);
     };
     fetchProducts();
-  }, [page, submitInput, marcasSeleccionadas]);
+  }, [page, submitInput, marcasSeleccionadas, reload]);
 
   if (loading) {
     return (
-      <div className="flex w-full flex-col items-center justify-center">
-        <h1 className="text-xl font-semibold">Cargando productos</h1>
+      <div className="flex w-full flex-col items-center justify-center gap-2">
+        <h1 className="animate-pulse text-xl font-semibold">
+          Cargando productos
+        </h1>
+        <Loading />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="rounded-md bg-red-700/15 px-4 py-1 text-xl font-semibold text-red-400 dark:bg-red-700/15">
-          Ha ocurrido un error al cargar los productos
-        </h1>
+      <div className="flex flex-col gap-2">
+        <div className="flex w-max items-center justify-center gap-2 rounded-md bg-red-700/15 px-4 py-1 text-xl font-semibold text-red-400 dark:bg-red-700/15">
+          <IconDanger className="h-7 w-7 fill-red-400" />
+          <h1 className="">Ha ocurrido un error al cargar los productos</h1>
+        </div>
+        <button
+          onClick={() => setReload(reload + 1)}
+          className="rounded-md hover:text-neutral-500"
+        >
+          Intentar de nuevo
+        </button>
       </div>
     );
   }
