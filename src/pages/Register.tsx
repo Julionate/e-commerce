@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface FormValues {
   username: string;
@@ -23,6 +25,9 @@ export default function Register() {
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,33 +71,55 @@ export default function Register() {
     return errors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errors = validate(formData);
     setFormErrors(errors);
 
     if (Object.keys(validate(formData)).length === 0) {
-      console.log('Formulario enviado:', formData);
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/auth/register',
+          {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          },
+        );
+        setMessage({ status: 200, message: 'Registro exitoso, inicie sesión' });
+        setTimeout(() => {
+          navigate('/login');
+        }, 900);
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response) {
+          setMessage({
+            status: err.response.status,
+            message: err.response.data.message,
+          });
+        } else {
+          setError('Error de red');
+        }
+      }
     }
   };
 
   return (
-    <div className="w-full flex-grow flex justify-center items-center">
+    <div className="flex w-full flex-grow items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col justify-center items-center gap-2 relative bg-slate-50/10 dark:bg-slate-800 dark:border-white/5 border-black/5 shadow-md dark:shadow-white/5 w-3/4 min-h-96 max-h-[920px] max-w-96 rounded-xl p-10"
+        className="relative flex max-h-[920px] min-h-96 w-3/4 max-w-96 flex-col items-center justify-center gap-2 rounded-xl border-black/5 bg-slate-50/10 p-10 shadow-md dark:border-white/5 dark:bg-slate-800 dark:shadow-white/5"
       >
-        <h1 className="font-bold text-2xl sm:text-3xl mb-6">Registrarse</h1>
+        <h1 className="mb-6 text-2xl font-bold sm:text-3xl">Registrarse</h1>
         <label className="w-4/5">
           <input
             placeholder="Usuario"
             name="username"
             type="text"
             onChange={handleChange}
-            className="w-full bg-slate-50 dark:bg-slate-700 dark:text-white h-8 p-2 placeholder:text-slate-400 outline-none rounded-md shadow-sm dark:shadow-white/5m focus:bg-slate-100 dark:focus:bg-slate-600"
+            className="dark:shadow-white/5m h-8 w-full rounded-md bg-slate-50 p-2 shadow-sm outline-none placeholder:text-slate-400 focus:bg-slate-100 dark:bg-slate-700 dark:text-white dark:focus:bg-slate-600"
           />
           {formErrors.username && (
-            <p className="text-red-400 ml-2">{formErrors.username}</p>
+            <p className="ml-2 text-red-400">{formErrors.username}</p>
           )}
         </label>
         <label className="w-4/5">
@@ -101,10 +128,10 @@ export default function Register() {
             name="email"
             type="email"
             onChange={handleChange}
-            className="w-full bg-slate-50 dark:bg-slate-700 dark:text-white h-8 p-2 placeholder:text-slate-400 outline-none rounded-md shadow-sm dark:shadow-white/5m focus:bg-slate-100 dark:focus:bg-slate-600"
+            className="dark:shadow-white/5m h-8 w-full rounded-md bg-slate-50 p-2 shadow-sm outline-none placeholder:text-slate-400 focus:bg-slate-100 dark:bg-slate-700 dark:text-white dark:focus:bg-slate-600"
           />
           {formErrors.email && (
-            <p className="text-red-400 ml-2">{formErrors.email}</p>
+            <p className="ml-2 text-red-400">{formErrors.email}</p>
           )}
         </label>
         <label className="w-4/5">
@@ -113,10 +140,10 @@ export default function Register() {
             name="password"
             type="password"
             onChange={handleChange}
-            className="w-full bg-slate-50 dark:bg-slate-700 dark:text-white h-8 p-2 placeholder:text-slate-400 outline-none rounded-md shadow-sm dark:shadow-white/5 focus:bg-slate-100 dark:focus:bg-slate-600"
+            className="h-8 w-full rounded-md bg-slate-50 p-2 shadow-sm outline-none placeholder:text-slate-400 focus:bg-slate-100 dark:bg-slate-700 dark:text-white dark:shadow-white/5 dark:focus:bg-slate-600"
           />
           {formErrors.password && (
-            <p className="text-red-400 ml-2">{formErrors.password}</p>
+            <p className="ml-2 text-red-400">{formErrors.password}</p>
           )}
         </label>
         <label className="w-4/5">
@@ -125,21 +152,28 @@ export default function Register() {
             name="passwordConfirm"
             type="password"
             onChange={handleChange}
-            className="w-full bg-slate-50 dark:bg-slate-700 dark:text-white h-8 p-2 placeholder:text-slate-400 outline-none rounded-md shadow-sm dark:shadow-white/5 focus:bg-slate-100 dark:focus:bg-slate-600"
+            className="h-8 w-full rounded-md bg-slate-50 p-2 shadow-sm outline-none placeholder:text-slate-400 focus:bg-slate-100 dark:bg-slate-700 dark:text-white dark:shadow-white/5 dark:focus:bg-slate-600"
           />
           {formErrors.passwordConfirm && (
-            <p className="text-red-400 ml-2">{formErrors.passwordConfirm}</p>
+            <p className="ml-2 text-red-400">{formErrors.passwordConfirm}</p>
           )}
         </label>
+        {message ? (
+          <span
+            className={`-mb-4 text-center font-semibold ${message.status === 200 ? 'text-blue-400' : 'text-red-400'}`}
+          >
+            {message.message}
+          </span>
+        ) : null}
         <button
-          className="w-24 h-10 bg-sky-400 hover:bg-sky-400 dark:text-white text-white rounded-md font-semibold mt-6"
+          className="mt-6 h-10 w-24 rounded-md bg-sky-400 font-semibold text-white hover:bg-sky-400 dark:text-white"
           type="submit"
         >
           Registrarse{' '}
         </button>
         <a
           href="https://tailwindcss.com/docs/box-decoration-break"
-          className="absolute bottom-2 text-xs sm:text-base text-black/50 dark:text-white/50"
+          className="absolute bottom-2 text-xs text-black/50 sm:text-base dark:text-white/50"
         >
           Recuperar Contraseña
         </a>

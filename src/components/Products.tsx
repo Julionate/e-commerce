@@ -4,6 +4,8 @@ import Card from './Card';
 import Filters from './Filters';
 import Loading from './Loading';
 import IconDanger from '../assets/svg icons/IconDanger';
+import useAuth from '../utils/useAuth';
+import { jwtDecode } from 'jwt-decode';
 
 interface Product {
   idProducto: string;
@@ -17,6 +19,10 @@ interface Product {
   ImagenDescripcion: string;
 }
 
+interface DecodedToken {
+  username: string;
+}
+
 export default function Products({ submitInput }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [marcasSeleccionadas, setMarcasSeleccionadas] = useState([]);
@@ -28,7 +34,6 @@ export default function Products({ submitInput }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        console.log('Enviando petición');
         const response = await axios.get(
           'http://localhost:3000/products/search',
           {
@@ -85,8 +90,9 @@ export default function Products({ submitInput }) {
       <Filters setMarcasSeleccionadas={setMarcasSeleccionadas} />
       <div className="flex w-full flex-col items-center justify-center">
         <div className="grid w-3/4 grid-cols-[repeat(auto-fit,_minmax(250px,1fr))] gap-3">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <Card
+              key={index}
               idProducto={product.idProducto}
               product={product.Nombre}
               img={product.ImagenURL}

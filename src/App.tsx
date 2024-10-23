@@ -9,10 +9,28 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Cart from './pages/Cart';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Product from './pages/Product';
+import useAuth from './utils/useAuth';
+import { jwtDecode } from 'jwt-decode';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  const [userData, setUserData] = useState({});
+  const isAuthenticated = useAuth();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserData(decoded);
+    }
+
+    if (isAuthenticated === false) {
+      localStorage.removeItem('token');
+    }
+  }, [isAuthenticated]);
+
   if (
     localStorage.theme === 'dark' ||
     (!('theme' in localStorage) &&
@@ -32,7 +50,11 @@ function App() {
   return (
     <div className="min-w-screen flex min-h-screen flex-col bg-white text-gray-800 dark:bg-slate-900 dark:text-white">
       <Router>
-        <Header onSearch={handleSubmitInput} />
+        <Header
+          onSearch={handleSubmitInput}
+          userData={userData}
+          isAuthenticated={isAuthenticated}
+        />
         <Routes>
           <Route path="/" element={<Home submitInput={submitInput} />} />
           <Route path="/products" element={<Product />} />
@@ -40,7 +62,14 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </div>

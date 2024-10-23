@@ -8,14 +8,13 @@ import IconSun from '../assets/svg icons/IconSun';
 import IconMoonStars from '../assets/svg icons/IconMoonClearLine';
 import IconHome from '../assets/svg icons/IconHome';
 
-function Header({ onSearch }) {
+function Header({ onSearch, userData, isAuthenticated }) {
   const navigate = useNavigate();
   const currentLocation = useLocation().pathname;
   const [darkModeEnabled, setDarkMode] = useState(
     document.documentElement.classList.contains('dark'),
   );
   const [inputValue, setInputValue] = useState('');
-  console.log(currentLocation);
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -77,7 +76,16 @@ function Header({ onSearch }) {
           onClick={() => navigate('/login')}
           className="ml-2 cursor-pointer select-none text-center font-semibold leading-4 shadow-sm"
         >
-          Iniciar<span className="block">Sesión</span>
+          {isAuthenticated ? (
+            <>
+              Hola, <span className="block">{userData.username}</span>
+            </>
+          ) : (
+            <>
+              <span>Iniciar</span>
+              <span className="block">Sesión</span>
+            </>
+          )}
         </div>
         <button
           onClick={() =>
