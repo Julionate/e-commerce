@@ -6,6 +6,7 @@ import ProductReviews from '../components/ProductReviews';
 
 export default function Product() {
   const { id } = useParams();
+  const token = localStorage.getItem('token');
   const [product, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +61,25 @@ export default function Product() {
     fetchProducts();
   }, [id]);
 
+  const handleAddToCart = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/cart/add',
+        {
+          idProduct: Number(id),
+          cantidad: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch (err) {
+      console.log('Error al enviar al carrito');
+    }
+  };
+
   if (loading) {
     return <h1>Cargando...</h1>;
   }
@@ -111,7 +131,10 @@ export default function Product() {
           <button className="mb-2 h-12 rounded-md bg-sky-400 px-2 py-1 font-semibold text-white hover:bg-sky-500">
             COMPRAR AHORA
           </button>
-          <button className="h-12 rounded-md bg-sky-400 px-2 py-1 font-semibold text-white hover:bg-sky-500">
+          <button
+            onClick={handleAddToCart}
+            className="h-12 rounded-md bg-sky-400 px-2 py-1 font-semibold text-white hover:bg-sky-500"
+          >
             AGREGAR AL CARRITO
           </button>
         </div>
