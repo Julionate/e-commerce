@@ -93,7 +93,7 @@ function Header({ onSearch, userData, isAuthenticated }) {
           }
           className="relative h-8 w-8 rounded-md bg-sky-400 shadow-sm hover:bg-sky-500"
         >
-          <div className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-sm">
+          <div className="absolute -right-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-sm text-white">
             1
           </div>
           {currentLocation === '/cart' ? (

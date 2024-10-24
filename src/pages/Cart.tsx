@@ -1,69 +1,85 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import HorizontalCard from '../components/HorizontalCard';
 
+interface Producto {
+  idProducto: number;
+  Nombre: string;
+  Marca: string;
+  ImagenURL: string;
+  ImagenDescripcion: string;
+  Precio: number;
+  Descuento: number;
+  CantidadProducto: number;
+}
+
 export default function Cart() {
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [precioTotal, setPrecioTotal] = useState([]);
   const handleCheckout = () => {};
+
+  const calcularTotal = (productos: Producto[]) => {
+    return productos.reduce((acumulador: number, producto: Producto) => {
+      const precioConDescuento =
+        producto.Precio - producto.Precio * (producto.Descuento / 100);
+      return acumulador + precioConDescuento;
+    }, 0);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/cart/get', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProductos(response.data);
+        setPrecioTotal(calcularTotal(response.data));
+      } catch {
+        console.error('Ha ocurrido un error:');
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <>
-      <h1 className="text-3xl font-semibold ml-2">Productos</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] p-2">
-        <div className="w-full flex flex-col gap-2">
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
-          <HorizontalCard
-            img="1358307.jpeg"
-            price="1.128.990"
-            product="assabhsadbhjasdbhjsadhbjsabhjasdhbjsadnjhksadnjkhsadnjksadbhjhbuasbhasbhuasdbhuasdbhjadsbhjasdhbjasdbhjasdbhjasdbhjd"
-          />
+      <h1 className="mb-4 ml-2 text-3xl font-semibold">Productos</h1>
+      <div className="grid grid-cols-1 p-2 lg:grid-cols-[2fr,1fr]">
+        <div className="flex w-full flex-col gap-2">
+          {productos.map((producto, index) => (
+            <HorizontalCard
+              key={index}
+              img={producto.ImagenURL}
+              imgAlt={producto.ImagenDescripcion}
+              brand={producto.Marca}
+              product={producto.Nombre}
+              price={producto.Precio}
+              discount={producto.Descuento}
+              stock={producto.CantidadProducto}
+            />
+          ))}
         </div>
-        <div className="w-full flex justify-center pl-6 pr-6">
-          <div className="w-full h-max bg-slate-50/5 shadow-sm dark:shadow-white/5 dark:bg-slate-800 p-6 flex flex-col justify-center items-center rounded-md ">
-            <span className="text-xl font-semibold text-center">
+        <div className="flex w-full justify-center pl-6 pr-6">
+          <div className="flex h-max w-full flex-col items-center justify-center rounded-md bg-slate-50/5 p-6 shadow-sm dark:bg-slate-800 dark:shadow-white/5">
+            <span className="text-center text-xl font-semibold">
               Información del carrito
             </span>
-            <span className="text-base">Seleccionados 2 productos</span>
-            <span className="text-base">Monto total: $250.000</span>
+            <span className="text-base">
+              Total de productos: {productos.length}
+            </span>
+            <span className="text-base">
+              Monto total: $
+              {precioTotal.toLocaleString('es-CL', {
+                maximumFractionDigits: 0,
+              })}
+            </span>
             <button
               onClick={handleCheckout}
-              className="bg-sky-400 w-max pr-3 pl-3 h-8 rounded-md hover:bg-sky-500 font-semibold mt-6 shadow-sm text-white"
+              className="mt-6 h-8 w-max rounded-md bg-sky-400 pl-3 pr-3 font-semibold text-white shadow-sm hover:bg-sky-500"
             >
               Ir al pago
             </button>

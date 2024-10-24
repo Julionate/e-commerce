@@ -15,7 +15,7 @@ interface CardProps {
 }
 
 export default function Card({
-  img = 'public/20240708_023624.jpg',
+  img = '/placeholder.jpg',
   brand = 'Brand Name',
   product = 'Product Name',
   description = '',
@@ -26,7 +26,7 @@ export default function Card({
   reviewsRating = 0,
   idProducto = 0,
 }: CardProps) {
-  img = img || '/20240708_023624.jpg';
+  img = img || '/placeholder.jpg';
   const discountPrice = (price * (1 - discount / 100)).toLocaleString('es-ES', {
     maximumFractionDigits: 0,
   });

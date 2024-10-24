@@ -12,9 +12,8 @@ const useAuth = () => {
 
       if (token) {
         try {
-          const response = await axios.post(
+          const response = await axios.get(
             'http://localhost:3000/auth/verify-token',
-            {},
             {
               headers: {
                 Authorization: `Bearer ${token}`,
