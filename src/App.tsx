@@ -48,7 +48,7 @@ function App() {
   };
 
   return (
-    <div className="min-w-screen flex min-h-screen flex-col bg-white text-gray-800 dark:bg-slate-900 dark:text-white">
+    <div className="min-w-screen flex min-h-screen flex-col overflow-hidden bg-white text-gray-800 dark:bg-slate-900 dark:text-white">
       <Router>
         <Header
           onSearch={handleSubmitInput}

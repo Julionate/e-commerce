@@ -1,3 +1,7 @@
+import IconPlus from '../assets/svg icons/IconPlus';
+import IconMinus from '../assets/svg icons/IconMinus';
+import { useState, useEffect, useRef } from 'react';
+
 interface CardProps {
   img?: string;
   imgAlt?: string;
@@ -6,6 +10,7 @@ interface CardProps {
   price?: number;
   discount?: number;
   stock?: number;
+  cantidad?: number;
 }
 
 export default function HorizontalCard({
@@ -16,7 +21,45 @@ export default function HorizontalCard({
   price = 0,
   discount = 0,
   stock = 0,
+  cantidad = 0,
 }: CardProps) {
+  const [cantidadInput, setCantidadInput] = useState(cantidad);
+  const [debouncedCount, setDebouncedCount] = useState(cantidadInput);
+  const isFirstRender = useRef(true);
+
+  const handleOneMore = () => {
+    if (cantidadInput >= 0) {
+      setCantidadInput(cantidadInput + 1);
+    }
+  };
+
+  const handleOneLess = () => {
+    if (cantidadInput > 0) {
+      setCantidadInput(cantidadInput - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedCount(cantidadInput);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [cantidadInput]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Cambiar después del primer render
+      return;
+    }
+
+    if (debouncedCount !== cantidadInput) return;
+
+    console.log('Guardando en la base de datos:', debouncedCount);
+  }, [debouncedCount, cantidadInput]);
+
   img = img ?? '/placeholder.jpg';
   const discountPrice =
     discount === 0 ? null : price - price * (discount / 100);
@@ -58,7 +101,25 @@ export default function HorizontalCard({
           ) : (
             <span className="text-red-400">Fuera de stock</span>
           )}
-          <div className="h-8 w-28 bg-slate-700">Insertar weas</div>
+          <div className="grid h-8 w-28 grid-cols-3">
+            <button
+              onClick={handleOneLess}
+              className="flex h-full items-center justify-center bg-sky-400"
+            >
+              <IconMinus className="h-6 w-6 stroke-white stroke-[4px]" />
+            </button>
+            <input
+              onChange={(e) => setCantidadInput(Number(e.target.value))}
+              value={cantidadInput}
+              className="h-full bg-slate-50 text-center outline-none dark:bg-slate-700"
+            ></input>
+            <button
+              onClick={handleOneMore}
+              className="flex h-full items-center justify-center bg-sky-400"
+            >
+              <IconPlus className="h-6 w-6 stroke-white stroke-[4px]" />
+            </button>
+          </div>
         </div>
       </div>
     </>

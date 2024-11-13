@@ -11,6 +11,7 @@ interface Producto {
   Precio: number;
   Descuento: number;
   CantidadProducto: number;
+  CantidadCarrito: number;
 }
 
 export default function Cart() {
@@ -46,9 +47,9 @@ export default function Cart() {
   }, []);
 
   return (
-    <>
+    <div className="p-2">
       <h1 className="mb-4 ml-2 text-3xl font-semibold">Productos</h1>
-      <div className="grid grid-cols-1 p-2 lg:grid-cols-[2fr,1fr]">
+      <div className="grid grid-cols-1 p-6 lg:grid-cols-[2fr,1fr]">
         <div className="flex w-full flex-col gap-2">
           {productos.map((producto, index) => (
             <HorizontalCard
@@ -60,10 +61,11 @@ export default function Cart() {
               price={producto.Precio}
               discount={producto.Descuento}
               stock={producto.CantidadProducto}
+              cantidad={producto.CantidadCarrito}
             />
           ))}
         </div>
-        <div className="flex w-full justify-center pl-6 pr-6">
+        <div className="flex w-full justify-center pl-6">
           <div className="flex h-max w-full flex-col items-center justify-center rounded-md bg-slate-50/5 p-6 shadow-sm dark:bg-slate-800 dark:shadow-white/5">
             <span className="text-center text-xl font-semibold">
               Información del carrito
@@ -86,6 +88,6 @@ export default function Cart() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
