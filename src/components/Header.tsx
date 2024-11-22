@@ -89,7 +89,7 @@ function Header({ onSearch, userData, isAuthenticated }) {
         </div>
         <button
           onClick={() =>
-            currentLocation === '/' ? navigate('/cart') : navigate('/')
+            currentLocation === '/cart' ? navigate('/') : navigate('/cart')
           }
           className="relative h-8 w-8 rounded-md bg-sky-400 shadow-sm hover:bg-sky-500"
         >

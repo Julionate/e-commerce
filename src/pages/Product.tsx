@@ -75,8 +75,8 @@ export default function Product() {
           },
         },
       );
-    } catch (err) {
-      console.log('Error al enviar al carrito');
+    } catch {
+      console.error('Error al enviar al carrito');
     }
   };
 

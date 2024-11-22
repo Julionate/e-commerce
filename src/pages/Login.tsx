@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface FormValues {
@@ -61,6 +61,7 @@ export default function Login() {
 
         localStorage.setItem('token', response.data.token);
         setMessage({ status: 200, message: 'Inicio de sesión exitoso' });
+        window.location.href = '/';
       } catch (err) {
         if (axios.isAxiosError(err) && err.response) {
           setMessage({

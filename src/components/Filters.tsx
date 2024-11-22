@@ -26,8 +26,6 @@ export default function Filters({ setMarcasSeleccionadas }) {
     }
   };
 
-  console.log(precioInput);
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {

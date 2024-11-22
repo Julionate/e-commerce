@@ -51,9 +51,10 @@ export default function Cart() {
       <h1 className="mb-4 ml-2 text-3xl font-semibold">Productos</h1>
       <div className="grid grid-cols-1 p-6 lg:grid-cols-[2fr,1fr]">
         <div className="flex w-full flex-col gap-2">
-          {productos.map((producto, index) => (
+          {productos.map((producto) => (
             <HorizontalCard
-              key={index}
+              key={producto.idProducto}
+              id={producto.idProducto}
               img={producto.ImagenURL}
               imgAlt={producto.ImagenDescripcion}
               brand={producto.Marca}

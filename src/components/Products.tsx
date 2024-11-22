@@ -4,11 +4,9 @@ import Card from './Card';
 import Filters from './Filters';
 import Loading from './Loading';
 import IconDanger from '../assets/svg icons/IconDanger';
-import useAuth from '../utils/useAuth';
-import { jwtDecode } from 'jwt-decode';
 
 interface Product {
-  idProducto: string;
+  idProducto: number;
   Nombre: string;
   Marca: string;
   Precio: number;
@@ -17,10 +15,6 @@ interface Product {
   Criticas: number;
   ImagenURL: string;
   ImagenDescripcion: string;
-}
-
-interface DecodedToken {
-  username: string;
 }
 
 export default function Products({ submitInput }) {

@@ -1,8 +1,10 @@
 import IconPlus from '../assets/svg icons/IconPlus';
 import IconMinus from '../assets/svg icons/IconMinus';
 import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
 interface CardProps {
+  id?: number;
   img?: string;
   imgAlt?: string;
   brand?: string;
@@ -14,6 +16,7 @@ interface CardProps {
 }
 
 export default function HorizontalCard({
+  id,
   img = '/placeholder.jpg',
   imgAlt = '',
   brand = 'Brand Name',
@@ -23,12 +26,32 @@ export default function HorizontalCard({
   stock = 0,
   cantidad = 0,
 }: CardProps) {
+  const token = localStorage.getItem('token');
   const [cantidadInput, setCantidadInput] = useState(cantidad);
   const [debouncedCount, setDebouncedCount] = useState(cantidadInput);
   const isFirstRender = useRef(true);
 
+  const submitChanges = async () => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/cart/set',
+        {
+          idProduct: Number(id),
+          cantidad: debouncedCount,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    } catch {
+      console.error('Error al enviar al carrito');
+    }
+  };
+
   const handleOneMore = () => {
-    if (cantidadInput >= 0) {
+    if (cantidadInput >= 0 && cantidadInput < stock) {
       setCantidadInput(cantidadInput + 1);
     }
   };
@@ -42,7 +65,7 @@ export default function HorizontalCard({
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedCount(cantidadInput);
-    }, 1000);
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -51,13 +74,13 @@ export default function HorizontalCard({
 
   useEffect(() => {
     if (isFirstRender.current) {
-      isFirstRender.current = false; // Cambiar después del primer render
+      isFirstRender.current = false;
       return;
     }
 
     if (debouncedCount !== cantidadInput) return;
 
-    console.log('Guardando en la base de datos:', debouncedCount);
+    submitChanges();
   }, [debouncedCount, cantidadInput]);
 
   img = img ?? '/placeholder.jpg';
@@ -68,7 +91,7 @@ export default function HorizontalCard({
       <div className="h-1 w-full rounded-full bg-gray-100 first:hidden dark:bg-slate-800"></div>
       <div className="grid h-36 min-w-full grid-cols-[2fr,4fr,0.5fr] overflow-hidden rounded-md border-black/5 bg-slate-50/25 shadow-sm transition-all hover:shadow-lg lg:grid-cols-[1fr,4fr,0.5fr] dark:border-white/5 dark:bg-slate-800 dark:shadow-white/5 dark:hover:shadow-white/5">
         <img
-          className="h-full w-full object-cover"
+          className="h-full w-auto object-cover"
           src={img}
           alt={imgAlt}
         ></img>
@@ -111,6 +134,8 @@ export default function HorizontalCard({
             <input
               onChange={(e) => setCantidadInput(Number(e.target.value))}
               value={cantidadInput}
+              min="0"
+              max={stock}
               className="h-full bg-slate-50 text-center outline-none dark:bg-slate-700"
             ></input>
             <button
