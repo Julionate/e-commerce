@@ -83,7 +83,7 @@ export default function Products({ submitInput }) {
     <>
       <Filters setMarcasSeleccionadas={setMarcasSeleccionadas} />
       <div className="flex w-full flex-col items-center justify-center">
-        <div className="grid w-3/4 grid-cols-[repeat(auto-fit,_minmax(250px,1fr))] gap-3">
+        <div className="grid w-3/4 grid-cols-[repeat(auto-fit,_minmax(250px,1fr))] place-items-center gap-3">
           {products.map((product, index) => (
             <Card
               key={index}

@@ -42,16 +42,16 @@ export default function Filters({ setMarcasSeleccionadas }) {
   }, []);
 
   return (
-    <div className="flex h-max w-64 flex-row gap-4 self-start overflow-hidden text-ellipsis rounded-lg p-2 text-left shadow-sm md:sticky md:top-[86px] md:ml-32 md:flex-col dark:shadow-white/5">
+    <div className="flex h-max w-max flex-row justify-center gap-4 self-center overflow-hidden text-ellipsis rounded-lg p-2 text-left shadow-sm md:sticky md:top-[86px] md:ml-32 md:w-64 md:flex-col md:self-start dark:shadow-white/5">
       <div>
         <h3 className="pr-4 text-lg font-bold text-sky-400">Marcas</h3>
         <div className="h-0.5 w-full bg-sky-400"></div>
         <div className="relative">
           {!loading ? (
-            <ul className="max-h-64 overflow-scroll overflow-x-hidden pb-6 pr-4 pt-2">
+            <ul className="max-h-64 overflow-scroll overflow-x-hidden pb-6 pt-2">
               {marcas.map((marca, index) => (
                 <label
-                  className="flex cursor-pointer justify-between"
+                  className="flex cursor-pointer justify-between gap-2"
                   key={index}
                 >
                   <input
@@ -71,7 +71,7 @@ export default function Filters({ setMarcasSeleccionadas }) {
         </div>
       </div>
       <div>
-        <h3 className="mb-2 pr-4 text-lg font-bold text-sky-400">Precio</h3>
+        <h3 className="pr-4 text-lg font-bold text-sky-400">Precio</h3>
         <div className="mb-2 h-0.5 w-full bg-sky-400"></div>
         <div className="flex items-center justify-between text-sm">
           <input
