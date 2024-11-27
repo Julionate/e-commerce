@@ -13,6 +13,8 @@ interface CardProps {
   discount?: number;
   stock?: number;
   cantidad?: number;
+  reload: number;
+  setReload: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function HorizontalCard({
@@ -25,15 +27,29 @@ export default function HorizontalCard({
   discount = 0,
   stock = 0,
   cantidad = 0,
+  reload,
+  setReload,
 }: CardProps) {
   const token = localStorage.getItem('token');
   const [cantidadInput, setCantidadInput] = useState(cantidad);
   const [debouncedCount, setDebouncedCount] = useState(cantidadInput);
   const isFirstRender = useRef(true);
 
+  const removeItem = async () => {
+    try {
+      await axios.delete('http://localhost:3000/cart/remove', {
+        params: { idProduct: id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setReload(reload + 1);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const submitChanges = async () => {
     try {
-      const response = await axios.post(
+      await axios.post(
         'http://localhost:3000/cart/set',
         {
           idProduct: Number(id),
@@ -124,7 +140,7 @@ export default function HorizontalCard({
           ) : (
             <span className="text-red-400">Fuera de stock</span>
           )}
-          <div className="grid h-8 w-28 grid-cols-3">
+          <div className="grid h-8 w-32 grid-cols-4">
             <button
               onClick={handleOneLess}
               className="flex h-full items-center justify-center bg-sky-400"
@@ -143,6 +159,12 @@ export default function HorizontalCard({
               className="flex h-full items-center justify-center bg-sky-400"
             >
               <IconPlus className="h-6 w-6 stroke-white stroke-[4px]" />
+            </button>
+            <button
+              onClick={removeItem}
+              className="flex h-full items-center justify-center bg-red-400"
+            >
+              <IconPlus className="h-6 w-6 rotate-45 stroke-white stroke-[4px]" />
             </button>
           </div>
         </div>

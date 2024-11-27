@@ -17,6 +17,7 @@ interface Producto {
 export default function Cart() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [precioTotal, setPrecioTotal] = useState([]);
+  const [reload, setReload] = useState<number>(0);
   const handleCheckout = () => {};
 
   const calcularTotal = (productos: Producto[]) => {
@@ -44,7 +45,7 @@ export default function Cart() {
     };
 
     fetchProducts();
-  }, []);
+  }, [reload]);
 
   return (
     <div className="p-2">
@@ -63,6 +64,8 @@ export default function Cart() {
               discount={producto.Descuento}
               stock={producto.CantidadProducto}
               cantidad={producto.CantidadCarrito}
+              reload={reload}
+              setReload={setReload}
             />
           ))}
         </div>

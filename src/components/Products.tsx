@@ -20,6 +20,8 @@ interface Product {
 export default function Products({ submitInput }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [marcasSeleccionadas, setMarcasSeleccionadas] = useState([]);
+  const [minPrice, setMinPrice] = useState(null);
+  const [maxPrice, setMaxPrice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -35,6 +37,8 @@ export default function Products({ submitInput }) {
               page,
               search: submitInput,
               marcas: marcasSeleccionadas.join(','),
+              min: minPrice,
+              max: maxPrice,
             },
           },
         );
@@ -81,7 +85,13 @@ export default function Products({ submitInput }) {
 
   return (
     <>
-      <Filters setMarcasSeleccionadas={setMarcasSeleccionadas} />
+      <Filters
+        setMarcasSeleccionadas={setMarcasSeleccionadas}
+        setMinPrice={setMinPrice}
+        setMaxPrice={setMaxPrice}
+        reload={reload}
+        setReload={setReload}
+      />
       <div className="flex w-full flex-col items-center justify-center">
         <div className="grid w-3/4 grid-cols-[repeat(auto-fit,_minmax(250px,1fr))] place-items-center gap-3">
           {products.map((product, index) => (

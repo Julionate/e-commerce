@@ -1,18 +1,17 @@
-import { ChangeEvent, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import IconArrowLess from '../assets/svg icons/IconArrowLess';
 
-export default function Filters({ setMarcasSeleccionadas }) {
-  const [precioInput, setPrecioInput] = useState({ min: 0, max: 100000 });
+export default function Filters({
+  setMarcasSeleccionadas,
+  setMinPrice,
+  setMaxPrice,
+  reload,
+  setReload,
+}) {
   const [marcas, setMarcas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const colores = ['Negro', 'Blanco', 'Rojo', 'Azul', 'Verde'];
-
-  const handleChange = (object) => {
-    setPrecioInput({ ...precioInput, ...object });
-  };
 
   const handleOptions = (e) => {
     const { name, checked } = e.target;
@@ -75,17 +74,20 @@ export default function Filters({ setMarcasSeleccionadas }) {
         <div className="mb-2 h-0.5 w-full bg-sky-400"></div>
         <div className="flex items-center justify-between text-sm">
           <input
-            onChange={(e) => handleChange({ min: Number(e.target.value) })}
+            onChange={(e) => setMinPrice(e.target.value)}
             className="h-8 w-12 rounded-lg bg-gray-100 p-1 text-black outline-none focus:bg-gray-200"
             placeholder="Min"
           ></input>
           <div className="h-0.5 w-6 rounded-full bg-gray-300" />
           <input
-            onChange={(e) => handleChange({ max: Number(e.target.value) })}
+            onChange={(e) => setMaxPrice(e.target.value)}
             className="h-8 w-12 rounded-lg bg-gray-100 p-1 text-black outline-none focus:bg-gray-200"
             placeholder="Max"
           ></input>
-          <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-400 text-white">
+          <button
+            onClick={() => setReload(reload + 1)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-400 text-white"
+          >
             <IconArrowLess className="h-8 w-auto rotate-180 fill-white" />
           </button>
         </div>
